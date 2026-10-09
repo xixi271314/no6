@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二进制微课堂 - 七年级信息科技</title>
+    <style>
+        /* 全局样式 */
+        :root {
+            --primary: #00d2ff;
+            --secondary: #ffcc00;
+            --bg: #1a1a2e;
+            --card-bg: #22223b;
+            --text: #e0e0e0;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 幻灯片容器 */
+        .slide-container {
+            width: 90%;
+            max-width: 800px;
+            height: 65vh;
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 40px;
+            box-sizing: border-box;
+            display: none; /* 默认隐藏 */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+        .slide-container.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 文字排版 */
+        h1 { color: var(--primary); font-size: 2.2em; margin-bottom: 10px; }
+        h2 { color: var(--secondary); font-size: 1.8em; margin-bottom: 20px; }
+        p { font-size: 1.2em; line-height: 1.6; margin-bottom: 15px; max-width: 90%; }
+        .highlight { color: var(--secondary); font-weight: bold; }
+        .question { color: #ff7e67; font-style: italic; font-size: 1.3em; margin-bottom: 20px; }
+
+        /* 动画元素 */
+        .switch-demo {
+            display: flex;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        .switch-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .switch-symbol {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        /* 灯泡交互区（复用之前的逻辑） */
+        .bulbs-container { display: flex; gap: 15px; margin: 20px 0; }
+        .bulb-wrapper { display: flex; flex-direction: column; align-items: center; }
+        .bulb {
+            width: 70px; height: 70px; border-radius: 50%;
+            background-color: #2a2a3b; border: 4px solid #444;
+            cursor: pointer; transition: all 0.3s ease;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; font-weight: bold; color: #555; user-select: none;
+        }
+        .bulb.on {
+            background-color: var(--secondary); border-color: #ffaa00;
+            box-shadow: 0 0 20px var(--secondary); color: #333;
+        }
+        .value-label { margin-top: 10px; font-size: 1.2em; font-weight: bold; color: var(--primary); }
+
+        .result-box {
+            background-color: #0f0f1a; padding: 15px 30px; border-radius: 10px;
+            border: 1px solid var(--primary); margin-bottom: 10px; min-width: 250px;
+        }
+        .equation { font-size: 1.4em; color: #fff; letter-spacing: 1px; }
+        .total { font-size: 2em; font-weight: bold; color: var(--secondary); margin-top: 5px; }
+
+        /* 底部导航 */
+        .nav-bar {
+            margin-top: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .nav-btn {
+            background-color: var(--primary);
+            color: #1a1a2e; border: none; padding: 12px 25px;
+            font-size: 1.1em; font-weight: bold; border-radius: 8px; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .nav-btn:hover { background-color: #00b0d4; transform: scale(1.05); }
+        .nav-btn:disabled { background-color: #444; color: #888; cursor: not-allowed; transform: none; }
+        
+        .page-indicator { font-size: 1.1em; color: #888; }
+
+        /* 挑战反馈 */
+        .feedback { margin-top: 10px; font-size: 1.3em; font-weight: bold; height: 30px; }
+        .success { color: #00ff88; }
+    </style>
+</head>
+<body>
+
+    <!-- 幻灯片 1：引入 -->
+    <div class="slide-container active" id="slide1">
+        <h1>💡 计算机的 0 和 1 💡</h1>
+        <p>我们在前面学了，数据在互联网上是以 0 和 1 传输的。</p>
+        <div class="question">为什么计算机偏偏只认识 0 和 1 呢？用 1, 2, 3, 4, 5 不行吗？</div>
+        <p>因为计算机是由<b>电子元件</b>组成的。</p>
+        <div class="switch-demo">
+            <div class="switch-item">
+                <div class="switch-symbol">🔌</div>
+                <div>通电（亮）</div>
+                <div class="highlight">= 1</div>
+            </div>
+            <div class="switch-item">
+                <div class="switch-symbol">🔋</div>
+                <div>断电（灭）</div>
+                <div class="highlight">= 0</div>
+            </div>
+        </div>
+        <p>电灯只有“开”和“关”两种状态，所以计算机只能用 0 和 1 来记录一切。</p>
+    </div>
+
+    <!-- 幻灯片 2：规则 -->
+    <div class="slide-container" id="slide2">
+        <h2>二进制：逢二进一</h2>
+        <p>人类有10根手指，所以习惯了“逢十进一”（9后面是10）。</p>
+        <p>计算机只有两个“手指”（0和1），所以它的规则是：<span class="highlight">逢二进一</span>！</p>
+        <div style="background:#111; padding:20px; border-radius:10px; margin-top:20px; width:80%;">
+            <p style="font-size:1.5em; letter-spacing: 2px; margin:0;">
+                <span style="color:#888;">十进制：</span> 0, 1, <span class="highlight">2</span>, 3, 4, 5...
+            </p>
+            <p style="font-size:1.5em; letter-spacing: 2px; margin-top:15px;">
+                <span style="color:#888;">二进制：</span> 0, 1, <span class="highlight">10</span>, 11, 100, 101...
+            </p>
+        </div>
+        <p style="margin-top:20px;">注意：二进制里的“10”，并不是我们说的“十”，而是“二”！</p>
+    </div>
+
+    <!-- 幻灯片 3：计算方法 -->
+    <div class="slide-container" id="slide3">
+        <h2>怎么把 0 和 1 变成数字？</h2>
+        <p>我们可以把 4 个灯泡排成一排，给它们规定固定的“分值”：</p>
+        <div style="font-size: 2.5em; font-weight: bold; color: var(--primary); margin: 20px 0; letter-spacing: 20px;">
+            8 &nbsp; 4 &nbsp; 2 &nbsp; 1
+        </div>
+        <p><b>规则：</b>灯亮代表 <span class="highlight">1</span>，灯灭代表 <span class="highlight">0</span>。<br>把亮着的灯泡对应的数字<b>加起来</b>，就是答案！</p>
+        <div style="background:#111; padding:15px; border-radius:10px; width:80%; font-size:1.3em;">
+            演示：<b>0 1 0 1</b> <br> (4号灯亮 + 1号灯亮) <br> = 4 + 1 = <span class="highlight">5</span>
+        </div>
+    </div>
+
+    <!-- 幻灯片 4：交互操作（灯泡） -->
+    <div class="slide-container" id="slide4">
+        <h2>动手试一试：点亮灯泡！</h2>
+        <p style="margin-bottom: 10px;">点击下面的灯泡，看看下方会显示什么数字？</p>
+        
+        <div class="bulbs-container">
+            <div class="bulb-wrapper"><div class="bulb" id="bulb-8" onclick="toggleBulb(0)">0</div><div class="value-label">8</div></div>
+            <div class="bulb-wrapper"><div class="bulb" id="bulb-4" onclick="toggleBulb(1)">0</div><div class="value-label">4</div></div>
+            <div class="bulb-wrapper"><div class="bulb" id="bulb-2" onclick="toggleBulb(2)">0</div><div class="value-label">2</div></div>
+            <div class="bulb-wrapper"><div class="bulb" id="bulb-1" onclick="toggleBulb(3)">0</div><div class="value-label">1</div></div>
+        </div>
+
+        <div class="result-box">
+            <div class="equation" id="equation">0 + 0 + 0 + 0</div>
+            <div class="total" id="total">= 0</div>
+        </div>
+    </div>
+
+    <!-- 幻灯片 5：挑战关卡 -->
+    <div class="slide-container" id="slide5">
+        <h2>🎲 挑战：二进制拨号！</h2>
+        <p>请拨出下面这个数字，看看你能不能挑战成功！</p>
+        
+        <div style="background:var(--primary); color:#1a1a2e; padding:10px 40px; border-radius:50px; font-size:2em; font-weight:bold; margin:20px 0;">
+            目标：<span id="target-number">--</span>
+        </div>
+
+        <div class="bulbs-container">
+            <div class="bulb-wrapper"><div class="bulb" id="c-bulb-8" onclick="toggleChallengeBulb(0)">0</div><div class="value-label">8</div></div>
+            <div class="bulb-wrapper"><div class="bulb" id="c-bulb-4" onclick="toggleChallengeBulb(1)">0</div><div class="value-label">4</div></div>
+            <div class="bulb-wrapper"><div class="bulb" id="c-bulb-2" onclick="toggleChallengeBulb(2)">0</div><div class="value-label">2</div></div>
+            <div class="bulb-wrapper"><div class="bulb" id="c-bulb-1" onclick="toggleChallengeBulb(3)">0</div><div class="value-label">1</div></div>
+        </div>
+
+        <div class="total" style="font-size:1.5em; margin-top:10px;">当前数值：<span id="c-total" class="highlight" style="font-size:1.5em;">0</span></div>
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+
+    <!-- 底部导航栏 -->
+    <div class="nav-bar">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">上一页</button>
+        <span class="page-indicator" id="pageIndicator">1 / 5</span>
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">下一页</button>
+    </div>
+
+    <script>
+        // ================= 幻灯片逻辑 =================
+        let currentSlide = 1;
+        const totalSlides = 5;
+
+        function updateNav() {
+            document.querySelectorAll('.slide-container').forEach((el, index) => {
+                el.classList.remove('active');
+                if (index + 1 === currentSlide) el.classList.add('active');
+            });
+            document.getElementById('pageIndicator').textContent = `${currentSlide} / ${totalSlides}`;
+            document.getElementById('prevBtn').disabled = currentSlide === 1;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
+
+            // 切换到挑战页时初始化
+            if (currentSlide === 5) {
+                startChallenge();
+            }
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide < 1) currentSlide = 1;
+            if (currentSlide > totalSlides) currentSlide = totalSlides;
+            updateNav();
+        }
+
+        // ================= 互动实验（幻灯片4）逻辑 =================
+        let bits = [0, 0, 0, 0];
+        const values = [8, 4, 2, 1];
+
+        function render() {
+            let total = 0;
+            let equationParts = [];
+
+            for (let i = 0; i < 4; i++) {
+                const bulb = document.getElementById(`bulb-${values[i]}`);
+                if (bits[i] === 1) {
+                    bulb.classList.add('on');
+                    bulb.textContent = '1';
+                    total += values[i];
+                    equationParts.push(values[i]);
+                } else {
+                    bulb.classList.remove('on');
+                    bulb.textContent = '0';
+                    equationParts.push('0');
+                }
+            }
+            document.getElementById('equation').textContent = equationParts.join(' + ');
+            document.getElementById('total').textContent = '= ' + total;
+        }
+
+        function toggleBulb(index) {
+            bits[index] = bits[index] === 1 ? 0 : 1;
+            render();
+        }
+
+        // ================= 挑战模式（幻灯片5）逻辑 =================
+        let cBits = [0, 0, 0, 0];
+        let targetNumber = null;
+
+        function renderChallenge() {
+            let total = 0;
+            for (let i = 0; i < 4; i++) {
+                const bulb = document.getElementById(`c-bulb-${values[i]}`);
+                if (cBits[i] === 1) {
+                    bulb.classList.add('on');
+                    bulb.textContent = '1';
+                    total += values[i];
+                } else {
+                    bulb.classList.remove('on');
+                    bulb.textContent = '0';
+                }
+            }
+            document.getElementById('c-total').textContent = total;
+
+            if (targetNumber !== null && total === targetNumber) {
+                document.getElementById('feedback').textContent = '🎉 太棒了！挑战成功！';
+                document.getElementById('feedback').className = 'feedback success';
+                setTimeout(() => { startChallenge(); }, 2000); // 2秒后出新题
+            } else {
+                document.getElementById('feedback').textContent = '';
+            }
+        }
+
+        function toggleChallengeBulb(index) {
+            cBits[index] = cBits[index] === 1 ? 0 : 1;
+            renderChallenge();
+        }
+
+        function startChallenge() {
+            targetNumber = Math.floor(Math.random() * 15) + 1; // 1 到 15
+            document.getElementById('target-number').textContent = targetNumber;
+            cBits = [0, 0, 0, 0];
+            document.getElementById('feedback').textContent = '';
+            renderChallenge();
+        }
+
+        // 初始化页面渲染
+        render();
+        updateNav();
+
+    </script>
+</body>
+</html>
